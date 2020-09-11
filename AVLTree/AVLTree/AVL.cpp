@@ -40,22 +40,41 @@ int AVL<T>::getMaxHeight(Node<T>* node) const
 template <typename T>
 Node<T>* leftRotation(Node<T>* pivotNode)
 {
-    return nullptr;
+    Node<T>* pivotRight = pivotNode->rightChild;
+    pivotNode->rightNode = pivotRight->leftChild;
+    pivotRight->leftChild = pivotNode;
+    
+    pivotNode->height = getMaxHeight(pivotNode);
+    pivotRight->height = getMaxHeight(pivotRight);
+    return pivotRight;
 }
+
 template <typename T>
 Node<T>* rightRotation(Node<T>* pivotNode)
 {
-    return nullptr;
+    Node<T>* pivotLeft = pivotNode->leftChild;
+    pivotNode->leftChild = pivotLeft->rightChild;
+    pivotLeft->rightChild = pivotNode;
+
+    pivotNode->height = getMaxHeight(pivotNode);
+    pivotLeft->height = getMaxHeight(pivotLeft);
+    return pivotLeft;
 }
+
 template <typename T>
 Node<T>* leftRightRotation(Node<T>* pivotNode)
 {
-    return nullptr;
+    pivotNode->leftChild = leftRotation(pivotNode->leftChild);
+    pivotNode = rightRotation(pivotNode);
+    return pivotNode;
 }
+
 template <typename T>
 Node<T>* rightleftRotation(Node<T>* pivotNode)
 {
-    return nullptr;
+    pivotNode->rightChild = rightRotation(pivotNode->rightChild);
+    pivotNode = leftRotation(pivotNode);
+    return pivotNode;
 }
 
 template <typename T>
@@ -79,8 +98,27 @@ Node<T>* AVL<T>::insert(Node<T>* node, const T value)
     int balance = getBalance(node);
     if(balance < -THRESHOLD)
     {
-        
+        if(getBalance(node->leftChild) > 0)
+        {
+             node = leftRightRotation(node);
+        }
+        else
+        {
+            node = rightRotation(node);
+        }
     }
+    else if(balance > THRESHOLD)
+    {
+        if(getBalance(node->rightChild) < 0)
+        {
+            node = rightleftRotation(node);
+        }
+        else
+        {
+            node = leftRotation(node);
+        }
+    }
+    return node;
 }
 
 template <typename T>
