@@ -27,12 +27,186 @@ class AVL{
     Node<T>* rightRotation(Node<T>* pivotNode);
     Node<T>* leftRightRotation(Node<T>* pivotNode);
     Node<T>* rightleftRotation(Node<T>* pivotNode);
+    Node<T>* rebalance(int balance, Node<T> *node);
+
     Node<T>* insert(Node<T>* root, const T value);
+    Node<T>* copyNode(Node<T>* node, Node<T>* nodeToCopy);
+    Node<T>* deleteNode(Node<T>* root, T key);
+    Node<T>* find(Node<T>* node, T key);
+    Node<T>* smallestValue(Node<T>* root);
 public:
+    AVL(vector<T> elements);
+    void operator=(const AVL& tree);
+    AVL(const AVL& tree);
+    ~AVL();
     Node<T>* insert(const T value);
     Node<T>* insert(vector<T> values);
-
+    Node<T>* getRoot() const;
+    void print() const;
+    void deleteNodeFor(const T key);
 };
+
+template <typename T>
+AVL<T>::AVL(vector<T> elements)
+{
+    root = insert(elements);
+};
+
+
+template <typename T>
+void recursiveDeletion(Node<T>* node)
+{
+    if(node == nullptr)
+        return;
+    else
+    {
+        Node<T>* leftChild = node->leftChild;
+        Node<T>* rightChild = node->rightChild;
+        delete node;
+        
+        recursiveDeletion(leftChild);
+        recursiveDeletion(rightChild);
+    }
+}
+
+template <typename T>
+AVL<T>::~AVL<T>()
+{
+    recursiveDeletion(root);
+}
+
+template <typename T>
+Node<T>* AVL<T>::copyNode(Node<T>* node, Node<T>* nodeToCopy)
+{
+    if(nodeToCopy == nullptr)
+    {
+        return nullptr;
+    }
+    else
+    {
+        node = new Node<T>(nodeToCopy->value);
+        
+        Node<T>* leftChild = nodeToCopy->leftChild;
+        Node<T>* rightChild = nodeToCopy->rightChild;
+        node->leftChild = copyNode(node->leftChild, leftChild);
+        node->rightChild = copyNode(node->rightChild, rightChild);
+    }
+    node->height = nodeToCopy->height;
+    return node;
+}
+
+template <typename T>
+void AVL<T>::operator=(const AVL& tree)
+{
+    if(this == &tree)
+        return;
+    
+    recursiveDeletion(this->root);
+    this->root = copyNode(this->root, tree.root);
+};
+
+template <typename T>
+AVL<T>::AVL(const AVL& tree)
+{
+    *this = tree;
+};
+
+template <typename T>
+Node<T>* find(Node<T>* node,T key)
+{
+    if(node == nullptr)
+    {
+        return nullptr;
+    }
+    
+    else if(node->value == key)
+    {
+        return node;
+    }
+    
+    else if(key < node->value)
+    {
+        return find(node->leftChild, key);
+    }
+    
+    else
+    {
+        return find(node->rightChild, key);
+    }
+}
+
+template <typename T>
+Node<T>* AVL<T>::smallestValue(Node<T>* root)
+{
+    if(root == nullptr)
+    {
+        return nullptr;
+    }
+    if(root->leftChild == nullptr)
+    {
+        return root;
+    }
+    return smallestValue(root->leftChild);
+}
+
+template <typename T>
+Node<T>* AVL<T>::deleteNode(Node<T>* root, T key)
+{
+    if(root == nullptr)
+        return nullptr;
+    
+    if(key < root->value)
+    {
+        root->leftChild = deleteNode(root->leftChild, key);
+    }
+    else if(key > root->value)
+    {
+        root->rightChild = deleteNode(root->rightChild, key);
+    }
+    else
+    {
+        if(root->rightChild == nullptr && root->leftChild == nullptr)
+        {
+            delete root;
+            root = nullptr;
+        }
+        else if(root->leftChild == nullptr)
+        {
+            Node<T>* rightChild = root->rightChild;
+            delete root;
+            root = rightChild;
+        }
+        else if(root->rightChild == nullptr)
+        {
+            Node<T>* leftChild = root->leftChild;
+            delete root;
+            root = leftChild;
+        }
+        else
+        {
+            Node<T>* node = smallestValue(root->rightChild);
+            if(node == nullptr)
+            {
+                return root;
+            }
+            root->value = node->value;
+            root->rightChild = deleteNode(root->rightChild, root->value);
+        }
+    }
+    
+    if(root == nullptr)
+    {
+        return root;
+    }
+    
+    //TODO: Re-balancing and height adjustments
+    //
+    root->height = getMaxHeight(root);
+    int newBalance = getBalance(root);
+    root = rebalance(newBalance, root);
+    
+    return root;
+}
 
 template <typename T>
 int AVL<T>::getHeight(Node<T>* node) const
@@ -100,6 +274,33 @@ Node<T>* AVL<T>::rightleftRotation(Node<T>* pivotNode)
 }
 
 template <typename T>
+Node<T>* AVL<T>::rebalance(int balance, Node<T> *node) {
+    if(balance < -THRESHOLD)
+    {
+        if(getBalance(node->leftChild) > 0)
+        {
+            node = leftRightRotation(node);
+        }
+        else
+        {
+            node = rightRotation(node);
+        }
+    }
+    else if(balance > THRESHOLD)
+    {
+        if(getBalance(node->rightChild) < 0)
+        {
+            node = rightleftRotation(node);
+        }
+        else
+        {
+            node = leftRotation(node);
+        }
+    }
+    return node;
+}
+
+template <typename T>
 Node<T>* AVL<T>::insert(Node<T>* node, const T value)
 {
     if(node == nullptr)
@@ -118,28 +319,8 @@ Node<T>* AVL<T>::insert(Node<T>* node, const T value)
     
     node->height = getMaxHeight(node);
     int balance = getBalance(node);
-    if(balance < -THRESHOLD)
-    {
-        if(getBalance(node->leftChild) > 0)
-        {
-             node = leftRightRotation(node);
-        }
-        else
-        {
-            node = rightRotation(node);
-        }
-    }
-    else if(balance > THRESHOLD)
-    {
-        if(getBalance(node->rightChild) < 0)
-        {
-            node = rightleftRotation(node);
-        }
-        else
-        {
-            node = leftRotation(node);
-        }
-    }
+    node = rebalance(balance, node);
+    
     return node;
 }
 
@@ -168,6 +349,22 @@ Node<T>* AVL<T>::insert(const T value)
     return insert({value});
 }
 
+template <typename T>
+Node<T>* AVL<T>::getRoot() const
+{
+    return root;
+}
 
+template <typename T>
+void AVL<T>::deleteNodeFor(const T key)
+{
+    root = deleteNode(root, key);
+}
+
+template <typename T>
+ void AVL<T>::print() const
+{
+    printTree(root, nullptr, false);
+}
 
 #endif /* AVL_h */
