@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		80D459842509554700B18F20 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D459832509554700B18F20 /* main.cpp */; };
-		80D4598C2509558500B18F20 /* AVL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80D4598B2509558500B18F20 /* AVL.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,7 +26,6 @@
 		80D459802509554700B18F20 /* AVLTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AVLTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		80D459832509554700B18F20 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		80D4598A2509557400B18F20 /* AVL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVL.h; sourceTree = "<group>"; };
-		80D4598B2509558500B18F20 /* AVL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AVL.cpp; sourceTree = "<group>"; };
 		80D4598D25096F9700B18F20 /* AVLUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVLUtilities.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -63,7 +61,6 @@
 			children = (
 				80D459832509554700B18F20 /* main.cpp */,
 				80D4598A2509557400B18F20 /* AVL.h */,
-				80D4598B2509558500B18F20 /* AVL.cpp */,
 				80D4598D25096F9700B18F20 /* AVLUtilities.h */,
 			);
 			path = AVLTree;
@@ -95,7 +92,7 @@
 		80D459782509554700B18F20 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1160;
+				LastUpgradeCheck = 1170;
 				ORGANIZATIONNAME = "Rosi-Eliz Dzhurkova";
 				TargetAttributes = {
 					80D4597F2509554700B18F20 = {
@@ -127,7 +124,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				80D459842509554700B18F20 /* main.cpp in Sources */,
-				80D4598C2509558500B18F20 /* AVL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,6 +242,7 @@
 		80D459882509554700B18F20 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = M6SMSSUJS8;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -256,6 +253,7 @@
 		80D459892509554700B18F20 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = M6SMSSUJS8;
 				ENABLE_HARDENED_RUNTIME = YES;

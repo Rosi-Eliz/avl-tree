@@ -55,7 +55,7 @@ void printTree(Node<T> *root, Trunk *prev, bool isRight)
     string prev_str = "    ";
     Trunk *trunk = new Trunk(prev, prev_str);
 
-    printTree(root->right, trunk, true);
+    printTree(root->rightChild, trunk, true);
 
     if (!prev)
         trunk->str = "---";
@@ -77,7 +77,7 @@ void printTree(Node<T> *root, Trunk *prev, bool isRight)
         prev->str = prev_str;
     trunk->str = "   |";
 
-    printTree(root->left, trunk, false);
+    printTree(root->leftChild, trunk, false);
     delete trunk;
 }
 
