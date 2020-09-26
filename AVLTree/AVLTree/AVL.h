@@ -17,51 +17,58 @@
 
 using namespace std;
 
-template <typename T>
+template <typename T, typename S>
 class AVL{
-    Node<T>* root = nullptr;
-    int getHeight(Node<T>* node) const;
-    int getBalance(Node<T>* node) const;
-    int getMaxHeight(Node<T>* node) const;
-    Node<T>* leftRotation(Node<T>* pivotNode);
-    Node<T>* rightRotation(Node<T>* pivotNode);
-    Node<T>* leftRightRotation(Node<T>* pivotNode);
-    Node<T>* rightleftRotation(Node<T>* pivotNode);
-    Node<T>* rebalance(int balance, Node<T> *node);
+    Node<T, S>* root = nullptr;
+    Node<T, S>* insert(vector<pair<T, S>> values);
+    int getHeight(Node<T, S>* node) const;
+    int getBalance(Node<T, S>* node) const;
+    int getMaxHeight(Node<T, S>* node) const;
+    Node<T, S>* leftRotation(Node<T, S>* pivotNode);
+    Node<T, S>* rightRotation(Node<T, S>* pivotNode);
+    Node<T, S>* leftRightRotation(Node<T, S>* pivotNode);
+    Node<T, S>* rightleftRotation(Node<T, S>* pivotNode);
+    Node<T, S>* rebalance(int balance, Node<T, S> *node);
 
-    Node<T>* insert(Node<T>* root, const T value);
-    Node<T>* copyNode(Node<T>* node, Node<T>* nodeToCopy);
-    Node<T>* deleteNode(Node<T>* root, T key);
-    Node<T>* find(Node<T>* node, T key);
-    Node<T>* smallestValue(Node<T>* root);
+    Node<T, S>* insert(Node<T, S>* root, pair<T, S> value);
+    Node<T, S>* copyNode(Node<T, S>* node, Node<T, S>* nodeToCopy);
+    Node<T, S>* deleteNode(Node<T, S>* root, T key);
+    Node<T, S>* find(Node<T, S>* node, T key);
+    Node<T, S>* smallestValue(Node<T, S>* root);
 public:
-    AVL(vector<T> elements);
+    AVL();
+    AVL(vector<pair<T, S>> elements);
     void operator=(const AVL& tree);
     AVL(const AVL& tree);
     ~AVL();
-    Node<T>* insert(const T value);
-    Node<T>* insert(vector<T> values);
-    Node<T>* getRoot() const;
+    void insertElement(const pair<T, S> element);
+    Node<T, S>* getRoot() const;
     void print() const;
     void deleteNodeFor(const T key);
 };
 
-template <typename T>
-AVL<T>::AVL(vector<T> elements)
+template <typename T, typename S>
+AVL<T, S>::AVL()
+{
+    root = nullptr;
+}
+
+template <typename T, typename S>
+AVL<T, S>::AVL(vector<pair<T, S>> elements)
 {
     root = insert(elements);
 };
 
 
-template <typename T>
-void recursiveDeletion(Node<T>* node)
+template <typename T, typename S>
+void recursiveDeletion(Node<T, S>* node)
 {
     if(node == nullptr)
         return;
     else
     {
-        Node<T>* leftChild = node->leftChild;
-        Node<T>* rightChild = node->rightChild;
+        Node<T, S>* leftChild = node->leftChild;
+        Node<T, S>* rightChild = node->rightChild;
         delete node;
         
         recursiveDeletion(leftChild);
@@ -69,14 +76,14 @@ void recursiveDeletion(Node<T>* node)
     }
 }
 
-template <typename T>
-AVL<T>::~AVL<T>()
+template <typename T, typename S>
+AVL<T, S>::~AVL<T, S>()
 {
     recursiveDeletion(root);
 }
 
-template <typename T>
-Node<T>* AVL<T>::copyNode(Node<T>* node, Node<T>* nodeToCopy)
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::copyNode(Node<T, S>* node, Node<T, S>* nodeToCopy)
 {
     if(nodeToCopy == nullptr)
     {
@@ -84,10 +91,10 @@ Node<T>* AVL<T>::copyNode(Node<T>* node, Node<T>* nodeToCopy)
     }
     else
     {
-        node = new Node<T>(nodeToCopy->value);
+        node = new Node<T, S>(nodeToCopy->key, nodeToCopy->value);
         
-        Node<T>* leftChild = nodeToCopy->leftChild;
-        Node<T>* rightChild = nodeToCopy->rightChild;
+        Node<T, S>* leftChild = nodeToCopy->leftChild;
+        Node<T, S>* rightChild = nodeToCopy->rightChild;
         node->leftChild = copyNode(node->leftChild, leftChild);
         node->rightChild = copyNode(node->rightChild, rightChild);
     }
@@ -95,8 +102,8 @@ Node<T>* AVL<T>::copyNode(Node<T>* node, Node<T>* nodeToCopy)
     return node;
 }
 
-template <typename T>
-void AVL<T>::operator=(const AVL& tree)
+template <typename T, typename S>
+void AVL<T, S>::operator=(const AVL& tree)
 {
     if(this == &tree)
         return;
@@ -105,14 +112,14 @@ void AVL<T>::operator=(const AVL& tree)
     this->root = copyNode(this->root, tree.root);
 };
 
-template <typename T>
-AVL<T>::AVL(const AVL& tree)
+template <typename T, typename S>
+AVL<T, S>::AVL(const AVL& tree)
 {
     *this = tree;
 };
 
-template <typename T>
-Node<T>* find(Node<T>* node,T key)
+template <typename T, typename S>
+Node<T, S>* find(Node<T, S>* node,T key)
 {
     if(node == nullptr)
     {
@@ -135,8 +142,8 @@ Node<T>* find(Node<T>* node,T key)
     }
 }
 
-template <typename T>
-Node<T>* AVL<T>::smallestValue(Node<T>* root)
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::smallestValue(Node<T, S>* root)
 {
     if(root == nullptr)
     {
@@ -149,8 +156,8 @@ Node<T>* AVL<T>::smallestValue(Node<T>* root)
     return smallestValue(root->leftChild);
 }
 
-template <typename T>
-Node<T>* AVL<T>::deleteNode(Node<T>* root, T key)
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::deleteNode(Node<T, S>* root, T key)
 {
     if(root == nullptr)
         return nullptr;
@@ -172,19 +179,19 @@ Node<T>* AVL<T>::deleteNode(Node<T>* root, T key)
         }
         else if(root->leftChild == nullptr)
         {
-            Node<T>* rightChild = root->rightChild;
+            Node<T, S>* rightChild = root->rightChild;
             delete root;
             root = rightChild;
         }
         else if(root->rightChild == nullptr)
         {
-            Node<T>* leftChild = root->leftChild;
+            Node<T, S>* leftChild = root->leftChild;
             delete root;
             root = leftChild;
         }
         else
         {
-            Node<T>* node = smallestValue(root->rightChild);
+            Node<T, S>* node = smallestValue(root->rightChild);
             if(node == nullptr)
             {
                 return root;
@@ -208,8 +215,8 @@ Node<T>* AVL<T>::deleteNode(Node<T>* root, T key)
     return root;
 }
 
-template <typename T>
-int AVL<T>::getHeight(Node<T>* node) const
+template <typename T, typename S>
+int AVL<T, S>::getHeight(Node<T, S>* node) const
 {
     if(node == nullptr)
     {
@@ -221,22 +228,22 @@ int AVL<T>::getHeight(Node<T>* node) const
     }
 }
 
-template <typename T>
-int AVL<T>::getBalance(Node<T>* node) const
+template <typename T, typename S>
+int AVL<T, S>::getBalance(Node<T, S>* node) const
 {
     return getHeight(node->rightChild) - getHeight(node->leftChild);
 }
 
-template <typename T>
-int AVL<T>::getMaxHeight(Node<T>* node) const
+template <typename T, typename S>
+int AVL<T, S>::getMaxHeight(Node<T, S>* node) const
 {
     return 1 + max(getHeight(node->leftChild), getHeight(node->rightChild));
 }
 
-template <typename T>
-Node<T>* AVL<T>::leftRotation(Node<T>* pivotNode)
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::leftRotation(Node<T, S>* pivotNode)
 {
-    Node<T>* pivotRight = pivotNode->rightChild;
+    Node<T, S>* pivotRight = pivotNode->rightChild;
     pivotNode->rightChild = pivotRight->leftChild;
     pivotRight->leftChild = pivotNode;
     
@@ -245,10 +252,10 @@ Node<T>* AVL<T>::leftRotation(Node<T>* pivotNode)
     return pivotRight;
 }
 
-template <typename T>
-Node<T>* AVL<T>::rightRotation(Node<T>* pivotNode)
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::rightRotation(Node<T, S>* pivotNode)
 {
-    Node<T>* pivotLeft = pivotNode->leftChild;
+    Node<T, S>* pivotLeft = pivotNode->leftChild;
     pivotNode->leftChild = pivotLeft->rightChild;
     pivotLeft->rightChild = pivotNode;
 
@@ -257,24 +264,24 @@ Node<T>* AVL<T>::rightRotation(Node<T>* pivotNode)
     return pivotLeft;
 }
 
-template <typename T>
-Node<T>* AVL<T>::leftRightRotation(Node<T>* pivotNode)
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::leftRightRotation(Node<T, S>* pivotNode)
 {
     pivotNode->leftChild = leftRotation(pivotNode->leftChild);
     pivotNode = rightRotation(pivotNode);
     return pivotNode;
 }
 
-template <typename T>
-Node<T>* AVL<T>::rightleftRotation(Node<T>* pivotNode)
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::rightleftRotation(Node<T, S>* pivotNode)
 {
     pivotNode->rightChild = rightRotation(pivotNode->rightChild);
     pivotNode = leftRotation(pivotNode);
     return pivotNode;
 }
 
-template <typename T>
-Node<T>* AVL<T>::rebalance(int balance, Node<T> *node) {
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::rebalance(int balance, Node<T, S> *node) {
     if(balance < -THRESHOLD)
     {
         if(getBalance(node->leftChild) > 0)
@@ -300,23 +307,26 @@ Node<T>* AVL<T>::rebalance(int balance, Node<T> *node) {
     return node;
 }
 
-template <typename T>
-Node<T>* AVL<T>::insert(Node<T>* node, const T value)
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::insert(Node<T, S>* node, pair<T, S> element)
 {
     if(node == nullptr)
     {
-        return new Node<T>(value);
+        return new Node<T, S>(element.first, element.second);
     }
     
-    if(value > node->value)
+    if(element.first > node->key)
     {
-        node->rightChild = insert(node->rightChild, value);
+        node->rightChild = insert(node->rightChild, element);
+    }
+    else if(element.first < node->key)
+    {
+        node->leftChild = insert(node->leftChild, element);
     }
     else
     {
-        node->leftChild = insert(node->leftChild, value);
+        node->value = element.second;
     }
-    
     node->height = getMaxHeight(node);
     int balance = getBalance(node);
     node = rebalance(balance, node);
@@ -324,45 +334,47 @@ Node<T>* AVL<T>::insert(Node<T>* node, const T value)
     return node;
 }
 
-template <typename T>
-Node<T>* AVL<T>::insert(vector<T> values)
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::insert(vector<pair<T, S>> values)
 {
     if(values.empty())
+    {
         return nullptr;
+    }
     
     if(root == nullptr)
     {
-        root = new Node<T>(values[0]);
+        root = new Node<T, S>(values[0].first, values[0].second);
         values.erase(values.begin());
     }
     
-    for(T& value : values)
+    for(pair<T, S>& element : values)
     {
-        root = insert(root, value);
+        root = insert(root, element);
     }
     return root;
 }
 
-template <typename T>
-Node<T>* AVL<T>::insert(const T value)
+template <typename T, typename S>
+void AVL<T, S>::insertElement(const pair<T, S> element)
 {
-    return insert({value});
+    root = insert({ element });
 }
 
-template <typename T>
-Node<T>* AVL<T>::getRoot() const
+template <typename T, typename S>
+Node<T, S>* AVL<T, S>::getRoot() const
 {
     return root;
 }
 
-template <typename T>
-void AVL<T>::deleteNodeFor(const T key)
+template <typename T, typename S>
+void AVL<T, S>::deleteNodeFor(const T key)
 {
     root = deleteNode(root, key);
 }
 
-template <typename T>
- void AVL<T>::print() const
+template <typename T, typename S>
+ void AVL<T, S>::print() const
 {
     printTree(root, nullptr, false);
 }

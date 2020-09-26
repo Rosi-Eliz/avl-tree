@@ -13,15 +13,17 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     
-    AVL<int> avl({14, 17, 11, 7, 53, 4, 13, 12});
-//    Node<int> *root = avl.insert({14, 17, 11, 7, 53, 4, 13, 12});
+    AVL<int, char> avl({pair<int, char>(14, 'A'),
+        pair<int, char>(17, 'B'),
+        pair<int, char>(11, 'C'),
+        pair<int, char>(7, 'D'),
+        pair<int, char>(53, 'E'),
+        pair<int, char>(4, 'F'),
+        pair<int, char>(13, 'G'),
+        pair<int, char>(12, 'H')});
     
-    AVL<int> avl2(avl);
+    AVL<int, char> avl2(avl);
     avl.print();
-
-    avl2.deleteNodeFor(53);
-    cout<<endl;
-    avl2.print();
     
     return 0;
 }

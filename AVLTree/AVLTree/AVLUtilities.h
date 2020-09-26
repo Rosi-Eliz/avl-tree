@@ -12,14 +12,15 @@
 #include <iostream>
 using namespace std;
 
-template <typename T>
+template <typename T, typename S>
 struct Node
 {
     Node* leftChild;
     Node* rightChild;
-    T value;
+    T key;
+    S value;
     int height;
-    Node(T value, Node* leftChild = nullptr, Node* rightChild = nullptr) : value(value), leftChild(leftChild), rightChild() {
+    Node(T key, S value, Node* leftChild = nullptr, Node* rightChild = nullptr) : key(key), value(value), leftChild(leftChild), rightChild() {
         height = 0;
     }
 };
@@ -46,8 +47,8 @@ void showTrunks(Trunk *p)
     cout<< p->str;
 }
 
-template <typename T>
-void printTree(Node<T> *root, Trunk *prev, bool isRight)
+template <typename T, typename S>
+void printTree(Node<T,  S> *root, Trunk *prev, bool isRight)
 {
     if (root == nullptr)
         return;
@@ -71,7 +72,7 @@ void printTree(Node<T> *root, Trunk *prev, bool isRight)
     }
 
     showTrunks(trunk);
-    cout << root->value << endl;
+    cout << root->key << "|" << root->value << endl;
 
     if (prev)
         prev->str = prev_str;
